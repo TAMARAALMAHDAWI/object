@@ -1,43 +1,110 @@
 
+
+
 class ToDo {
-    constructor() {
-        this.todoList = document.getElementById('todo-list'); // القائمة
-        this.todoInput = document.getElementById('todo-input'); // حقل الإدخال
-        this.addButton = document.getElementById('add-task-btn'); // زر الإضافة
+  constructor() {
+      this.taskInput = document.getElementById("taskinput");
+      this.addBtn = document.querySelector("#addTask");
+      this.taskList = document.getElementById("taskList");
 
-        // ربط زر الإضافة بوظيفة إضافة المهام
-        this.addButton.addEventListener('click', () => this.addTask());
-    }
+    
+      this.addBtn.addEventListener("click", () => {
+          this.addTask();
+      });
 
-    addTask() {
-        const taskText = this.todoInput.value.trim(); // قراءة النص
-        if (taskText === '') return; // التأكد من أن النص ليس فارغًا
+      
+      this.taskInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+              this.addTask();
+          }
+      });
+  }
 
-        const taskItem = document.createElement('li'); // إنشاء عنصر <li>
-        taskItem.textContent = taskText;
+  addTask() {
+      const inputTask = this.taskInput.value;
 
-        const completeBtn = document.createElement('button'); // زر الإكمال
-        completeBtn.textContent = 'Complete';
-        completeBtn.addEventListener('click', () => this.toggleComplete(taskItem));
+      if (inputTask === "") {
+          window.alert("Please enter value first");
+          return;
+      }
 
-        const deleteBtn = document.createElement('button'); // زر الحذف
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.addEventListener('click', () => this.deleteTask(taskItem));
+      const listItem = document.createElement("li");
+      const inputSpan = document.createElement("span");
+      const completedBtn = document.createElement("button");
+      const deleteBtn = document.createElement("button");
+      const editBtn = document.createElement("button");
 
-        taskItem.appendChild(completeBtn); // إضافة زر الإكمال
-        taskItem.appendChild(deleteBtn); // إضافة زر الحذف
-        this.todoList.appendChild(taskItem); // إضافة المهمة إلى القائمة
+      completedBtn.addEventListener("click", () => {
+          this.toggleComplete(inputSpan);
+      });
 
-        this.todoInput.value = ''; // تفريغ حقل الإدخال
-    }
+      deleteBtn.addEventListener("click", () => {
+          this.deleteTask(listItem);
+      });
 
-    toggleComplete(task) {
-        task.style.textDecoration = task.style.textDecoration === 'line-through' ? 'none' : 'line-through';
-        task.style.color = task.style.color === 'gray' ? 'black' : 'gray';
-    }
+      editBtn.addEventListener("click", () => {
+          this.editTask(listItem, inputSpan);
+      });
 
-    deleteTask(task) {
-        this.todoList.removeChild(task); // 
-        const myToDoList = new ToDo(); //
-    }
+      completedBtn.classList.add("btn");
+      completedBtn.classList.add("btn-success");
+
+      deleteBtn.classList.add("btn");
+      deleteBtn.classList.add("btn-danger");
+
+      editBtn.classList.add("btn");
+      editBtn.classList.add("btn-warning");// 
+
+      listItem.classList.add("mb-4");
+
+      inputSpan.innerText = inputTask;
+      completedBtn.innerText = "complete";
+      deleteBtn.innerText = "delete";
+      editBtn.innerText = "edit";
+
+      listItem.appendChild(inputSpan);
+      listItem.appendChild(completedBtn);
+      listItem.appendChild(deleteBtn);
+      listItem.appendChild(editBtn);
+      this.taskList.appendChild(listItem);
+
+      this.taskInput.value = "";
+  }
+
+  toggleComplete(task) {
+      task.classList.toggle("completed");
+  }
+
+  deleteTask(task) {
+      task.remove();
+  }
+
+ 
+  editTask(listItem, inputSpan) {
+    
+      const inputField = document.createElement("input");
+      inputField.value = inputSpan.innerText;
+
+  
+      listItem.insertBefore(inputField, inputSpan);
+      listItem.removeChild(inputSpan);
+
+     
+      inputField.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+              inputSpan.innerText = inputField.value; // 
+              listItem.insertBefore(inputSpan, inputField);
+              listItem.removeChild(inputField); // 
+          }
+      });
+
+
+      inputField.addEventListener("blur", () => {
+          inputSpan.innerText = inputField.value;
+          listItem.insertBefore(inputSpan, inputField);
+          listItem.removeChild(inputField);
+      });
+  }
 }
+
+const todoTask = new ToDo();
